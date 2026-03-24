@@ -4,11 +4,10 @@ import * as React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-  ChevronDown,
   Home,
-  Hammer,
-  Settings,
-  Users,
+  Send,
+  Users as UsersIcon,
+  BarChart3,
 } from "lucide-react";
 import {
   Collapsible,
@@ -23,25 +22,11 @@ type NavItem = {
   disabled?: boolean;
 };
 
-const sections: { title: string; items: NavItem[] }[] = [
-  {
-    title: "Platform",
-    items: [
-      { label: "Overview", href: "/dashboard", icon: Home },
-      {
-        label: "Feature",
-        href: "/dashboard/feature",
-        icon: Hammer,
-      },
-    ],
-  },
-  {
-    title: "Account",
-    items: [
-      { label: "Team", href: "/dashboard/team", icon: Users },
-      { label: "Settings", href: "/dashboard/settings", icon: Settings },
-    ],
-  },
+const navItems: NavItem[] = [
+  { label: "Dashboard", href: "/dashboard", icon: Home },
+  { label: "Campaigns", href: "/dashboard/campaigns", icon: Send },
+  { label: "Subscribers", href: "/dashboard/subscribers", icon: UsersIcon },
+  { label: "Analytics", href: "/dashboard/analytics", icon: BarChart3 },
 ];
 
 function NavLink({
@@ -81,60 +66,18 @@ function NavLink({
   );
 }
 
-function NavSection({
-  title,
-  items,
-  pathname,
-  defaultOpen,
-}: {
-  title: string;
-  items: NavItem[];
-  pathname: string;
-  defaultOpen: boolean;
-}) {
-  function checkActive(href: string) {
-    if (href === "/dashboard") return pathname === "/dashboard";
-    if (href === "#") return false;
-    return pathname.startsWith(href);
-  }
-
-  return (
-    <Collapsible defaultOpen={defaultOpen}>
-      <CollapsibleTrigger className="group flex w-full items-center justify-between px-3 py-1.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground/70 hover:text-muted-foreground transition-colors">
-        {title}
-        <ChevronDown className="size-3.5 transition-transform group-data-[state=closed]:-rotate-90" />
-      </CollapsibleTrigger>
-      <CollapsibleContent>
-        <div className="mt-1 space-y-0.5">
-          {items.map((item) => (
-            <NavLink
-              key={item.label}
-              {...item}
-              isActive={checkActive(item.href)}
-            />
-          ))}
-        </div>
-      </CollapsibleContent>
-    </Collapsible>
-  );
-}
-
 export function SidebarNav() {
   const pathname = usePathname();
 
   return (
-    <div className="flex flex-1 flex-col">
-      <nav className="flex-1 space-y-4">
-        {sections.map((section) => (
-          <NavSection
-            key={section.title}
-            title={section.title}
-            items={section.items}
-            pathname={pathname}
-            defaultOpen
-          />
-        ))}
-      </nav>
-    </div>
+    <nav className="flex flex-col gap-1">
+      {navItems.map((item) => (
+        <NavLink
+          key={item.href}
+          {...item}
+          isActive={pathname === item.href}
+        />
+      ))}
+    </nav>
   );
 }
